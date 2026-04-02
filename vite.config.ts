@@ -1,36 +1,48 @@
-import tailwindcss from '@tailwindcss/vite';
-import react from '@vitejs/plugin-react';
-import path from 'path';
 import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
+import path from 'path';
 
+// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, '.', '');
-  
+  // Load env file from directory '.', 'process.cwd()' is standard for TS
+  const env = loadEnv(mode, process.cwd(), '');
+
   return {
-    // CRITICAL: This matches your exact repo name on GitHub
-    // If you ever rename the repo, you must update this string.
+    /** * CRITICAL: This matches your exact GitHub Repository name.
+     * This ensures assets like index.js are loaded from:
+     * darealsalim01.github.io/PomodoroTimer/assets/...
+     */
     base: '/PomodoroTimer/',
 
-    plugins: [react(), tailwindcss()],
-    
+    plugins: [
+      react(),
+      tailwindcss(),
+    ],
+
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      // Prevents "process is not defined" errors in the browser
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || ''),
     },
-    
+
     resolve: {
       alias: {
-        // Points '@' to the current directory (root)
+        // Sets '@' as an alias for your root directory
         '@': path.resolve(__dirname, '.'),
       },
     },
 
     build: {
-      // Ensures the output goes to 'dist', which your deploy script expects
+      // Standard output directory for Netlify and GitHub Actions
       outDir: 'dist',
+      // Ensures assets are hashed for cache busting
+      assetsDir: 'assets',
+      // Generates smaller, cleaner production builds
+      sourcemap: false,
     },
 
     server: {
-      // Re-enabled HMR for your local Arch Linux development
+      // Enabled for your local Arch Linux development
       hmr: true,
     },
   };
