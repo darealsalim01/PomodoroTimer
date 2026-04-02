@@ -1,0 +1,5 @@
+{
+  "name": "FocusFlow Pomodoro",
+  "description": "A high-performance Pomodoro timer with ambient sounds, distraction capture, and focus analytics.",
+  "requestFramePermissions": []
+}
